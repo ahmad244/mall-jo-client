@@ -6,6 +6,7 @@ import { mobile } from "../responsive";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+
 const Container = styled.div`
   height: 60px;
   ${mobile({ height: "50px" })}
@@ -48,7 +49,6 @@ const Center = styled.div`
   flex: 1;
   text-align: center;
 `;
-
 const Logo = styled.h1`
   font-weight: bold;
   ${mobile({ fontSize: "24px" })}
@@ -60,16 +60,22 @@ const Right = styled.div`
   justify-content: flex-end;
   ${mobile({ flex: 2, justifyContent: "center" })}
 `;
-
 const MenuItem = styled.div`
   font-size: 14px;
   cursor: pointer;
   margin-left: 25px;
   ${mobile({ fontSize: "12px", marginLeft: "10px" })}
 `;
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+`;
 
 const Navbar = () => {
   const quantity = useSelector((state) => state.cart.quantity);
+  const user = useSelector((state) => state.user.currentUser);
+  console.log("user ---> ", user);
+
   return (
     <Container>
       <Wrapper>
@@ -81,15 +87,18 @@ const Navbar = () => {
           </SearchContainer>
         </Left>
         <Center>
-          <Logo>LAMA.</Logo>
+          <StyledLink to="/">
+            <Logo>LAMA.</Logo>
+          </StyledLink>
         </Center>
         <Right>
-          <Link to="/register">
+          <StyledLink to="/register">
             <MenuItem>REGISTER</MenuItem>
-          </Link>
-          <Link to="/login">
+          </StyledLink>
+          <StyledLink to="/login">
             <MenuItem>SIGN IN</MenuItem>
-          </Link>
+          </StyledLink>
+
           <Link to="/cart">
             <MenuItem>
               <Badge badgeContent={quantity} color="primary">

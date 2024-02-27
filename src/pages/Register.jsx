@@ -66,11 +66,14 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post("localhost:5000/api/auth/register", {
-        username,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          username,
+          email,
+          password,
+        }
+      );
 
       console.log(response.data); // You can use this data for feedback or redirect the user
     } catch (error) {

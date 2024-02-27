@@ -11,10 +11,8 @@ import {
   Redirect,
 } from "react-router-dom";
 import Success from "./pages/Success";
-import { useSelector } from "react-redux";
 
 const App = () => {
-  const user = useSelector((state) => state.user.currentUser);
   return (
     <Router>
       <Switch>
@@ -33,9 +31,13 @@ const App = () => {
         <Route path="/success">
           <Success />
         </Route>
-        <Route path="/login">{user ? <Redirect to="/" /> : <Login />}</Route>
+        <Route path="/login">
+          {/* {user ? <Redirect to="/" /> : <Login />} */}
+          <Login />
+        </Route>
         <Route path="/register">
-          {user ? <Redirect to="/" /> : <Register />}
+          {/* {user ? <Redirect to="/" /> : <Register />} */}
+          <Register />
         </Route>
       </Switch>
     </Router>

@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { login } from "../redux/apiCalls";
 import { mobile } from "../responsive";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Container = styled.div`
   width: 100vw;
@@ -57,11 +59,13 @@ const Button = styled.button`
   }
 `;
 
-const Link = styled.a`
+const StyledLink = styled(Link)`
   margin: 5px 0px;
   font-size: 12px;
   text-decoration: underline;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 `;
 
 const Error = styled.span`
@@ -73,10 +77,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
+  const history = useHistory(); // Get the history object
 
   const handleClick = (e) => {
     e.preventDefault();
-    login(dispatch, { username, password });
+    login(dispatch, { username, password },history);
+    console.log(error)
+
   };
   return (
     <Container>
@@ -96,8 +103,8 @@ const Login = () => {
             LOGIN
           </Button>
           {error && <Error>Something went wrong...</Error>}
-          <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link>
-          <Link>CREATE A NEW ACCOUNT</Link>
+          <StyledLink>DO NOT YOU REMEMBER THE PASSWORD?</StyledLink>
+          <StyledLink to="/register">CREATE A NEW ACCOUNT</StyledLink>
         </Form>
       </Wrapper>
     </Container>
