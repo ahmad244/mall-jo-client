@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { mobile } from "../responsive";
 import React, { useState } from "react";
-import axios from "axios";
+import { register } from '../redux/apiCalls';
+
 
 const Container = styled.div`
   width: 100vw;
@@ -56,29 +57,9 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault(); // prevent default form submission behavior
-
-    // Check if passwords match before sending the request
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          username,
-          email,
-          password,
-        }
-      );
-
-      console.log(response.data); // You can use this data for feedback or redirect the user
-    } catch (error) {
-      console.error(error); // Handle errors, e.g., display an error message to the user
-    }
+    register(username, email, password, confirmPassword);
   };
   return (
     <Container>

@@ -6,7 +6,6 @@ import { mobile } from "../responsive";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-
 const Container = styled.div`
   height: 60px;
   ${mobile({ height: "50px" })}
@@ -74,7 +73,6 @@ const StyledLink = styled(Link)`
 const Navbar = () => {
   const quantity = useSelector((state) => state.cart.quantity);
   const user = useSelector((state) => state.user.currentUser);
-  console.log("user ---> ", user);
 
   return (
     <Container>
@@ -92,12 +90,25 @@ const Navbar = () => {
           </StyledLink>
         </Center>
         <Right>
-          <StyledLink to="/register">
-            <MenuItem>REGISTER</MenuItem>
-          </StyledLink>
-          <StyledLink to="/login">
-            <MenuItem>SIGN IN</MenuItem>
-          </StyledLink>
+          {user ? (
+            <>
+              <StyledLink to="/">
+                <MenuItem>PROFILE</MenuItem>
+              </StyledLink>
+              <StyledLink to="/logout">
+                <MenuItem>LOG OUT</MenuItem>
+              </StyledLink>
+            </>
+          ) : (
+            <>
+              <StyledLink to="/register">
+                <MenuItem>REGISTER</MenuItem>
+              </StyledLink>
+              <StyledLink to="/login">
+                <MenuItem>SIGN IN</MenuItem>
+              </StyledLink>
+            </>
+          )}
 
           <Link to="/cart">
             <MenuItem>
