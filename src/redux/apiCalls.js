@@ -33,14 +33,15 @@ export const register = async (username, email, password, confirmPassword) => {
   } catch (error) {
     console.error(error); // Handle errors, e.g., display an error message to the user
   }
+  window.location.replace("/login");
 };
 
-export const addToCart = async (userId, productId, productSpecs) => {
+export const addToCart = async (productId, quantity, productSpecs) => {
   try {
     const response = await userRequest.post("/carts/add", {
-      userId,
       productId,
       productSpecs,
+      quantity,
     });
 
     if (response.status === 200 || response.status === 201) {
@@ -52,9 +53,24 @@ export const addToCart = async (userId, productId, productSpecs) => {
   }
 };
 
-export const getCart = async (userId) => {
+export const deleteFromCart = async (cartItem) => {
   try {
-    const response = await userRequest.get(`/carts/findById`);
+    const response = await userRequest.delete(`/carts/cartItem`, {
+      data: cartItem,
+    });
+
+    if (response.status === 200 || response.status === 201) {
+      console.log("Product deleted from cart successfully");
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error updating cart", error);
+  }
+};
+
+export const getCart = async () => {
+  try {
+    const response = await userRequest.get(`/carts/`);
     if (response.status === 200 || response.status === 201) {
       console.log("Cart fetched successfully");
       return response.data;

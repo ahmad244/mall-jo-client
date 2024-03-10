@@ -9,7 +9,7 @@ import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
 import { useHistory } from "react-router";
-import { getCart } from "../redux/apiCalls";
+import { getCart, addToCart, deleteFromCart } from "../redux/apiCalls";
 
 const KEY = process.env.REACT_APP_STRIPE;
 
@@ -167,28 +167,31 @@ const Cart = () => {
   const onToken = (token) => {
     setStripeToken(token);
   };
-  const { cart, setCart } = useState({});
-  const { cartTotal, setCartTotal } = useState(0);
+  const [cart, setCart] = useState({});
+  const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const cartData = await getCart(user._id);
-        let TempCartTotal = 0;
-
-        cartData.products.forEach((product) => {
-          TempCartTotal += product.price * product.quantity;
-        });
-
-        setCart(cartData);
-        setCartTotal(TempCartTotal);
-        console.log(cart,cartData);
+        handleCartRender(cartData);
       } catch (error) {
         console.log(error);
       }
     };
     fetchCart();
   }, []);
+
+  const handleCartRender = (cartData) => {
+    let TempCartTotal = 0.0;
+
+    cartData.products.forEach((cartItem) => {
+      TempCartTotal += cartItem.product.price * cartItem.quantity;
+    });
+    setCartTotal(TempCartTotal.toFixed(2));
+
+    setCart(cartData);
+  };
 
   useEffect(() => {
     const makeRequest = async () => {
@@ -205,6 +208,25 @@ const Cart = () => {
     };
     stripeToken && makeRequest();
   }, [stripeToken, cartTotal, history, cart]);
+
+  const handleCartAddRemove = (cartItem, quantity, index) => {
+    const updatedCartItem = { ...cartItem }; // Create a copy of the cart item
+    updatedCartItem.quantity += quantity; // Update the quantity
+
+    let updatedCart = { ...cart }; // Create a copy of the cart
+
+    if (updatedCartItem.quantity > 0) {
+      addToCart(updatedCartItem.productId, quantity, updatedCartItem.productSpecs);
+      console.log("index---> ", index);
+      updatedCart.products[index] = updatedCartItem; // Update the cart item at the specified index
+    } else {
+      deleteFromCart(updatedCartItem);
+      updatedCart.products.splice(index, 1); // Remove the cart item from the products array
+    }
+
+    handleCartRender(updatedCart);
+  };
+
   return (
     <Container>
       <Navbar />
@@ -222,31 +244,44 @@ const Cart = () => {
         {cart && (
           <Bottom>
             <Info>
-              {cart.products.map((product) => (
-                <Product key={product._id}>
+              {cart?.products?.map((cartItem, index) => (
+                <Product
+                  key={
+                    cartItem.productId + JSON.stringify(cartItem.productSpecs)
+                  }
+                >
                   <ProductDetail>
-                    <Image src={product.img} />
+                    <Image src={cartItem.product.img} />
                     <Details>
                       <ProductName>
-                        <b>Product:</b> {product.title}
+                        <b>Product:</b> {cartItem.product.title}
                       </ProductName>
                       <ProductId>
-                        <b>ID:</b> {product._id}
+                        <b>ID:</b> {cartItem.productId}
                       </ProductId>
-                      <ProductColor color={product.color} />
+                      <ProductColor color={cartItem.productSpecs.color} />
                       <ProductSize>
-                        <b>Size:</b> {product.size}
+                        <b>Size:</b> {cartItem.productSpecs.size}
                       </ProductSize>
                     </Details>
                   </ProductDetail>
                   <PriceDetail>
                     <ProductAmountContainer>
-                      <Add />
-                      <ProductAmount>{product.quantity}</ProductAmount>
-                      <Remove />
+                      <Add
+                        onClick={() => {
+                          handleCartAddRemove(cartItem, 1, index);
+                        }}
+                      />
+                      <ProductAmount>{cartItem.quantity}</ProductAmount>
+                      <Remove
+                        onClick={() => {
+                          handleCartAddRemove(cartItem, -1, index);
+                        }}
+                      />
                     </ProductAmountContainer>
                     <ProductPrice>
-                      $ {product.price * product.quantity}
+                      ${" "}
+                      {(cartItem.product.price * cartItem.quantity).toFixed(2)}
                     </ProductPrice>
                   </PriceDetail>
                 </Product>

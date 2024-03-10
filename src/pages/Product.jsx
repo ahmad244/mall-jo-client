@@ -153,10 +153,10 @@ const Product = () => {
   const handleClick = () => {
     dispatch(addProduct({ ...product, quantity, color, size }));
     console.log("accessToken   ------>", user?.accessToken);
-    addToCart(user._id, product._id, {
+    addToCart( product._id,quantity, {
       size: size,
       color: color,
-    },quantity);
+    });
   };
   return (
     <Container>
