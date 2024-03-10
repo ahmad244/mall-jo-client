@@ -23,7 +23,7 @@ export const register = async (username, email, password, confirmPassword) => {
   }
 
   try {
-    const response = await publicRequest.post("auth/register", {
+    const response = await publicRequest.post("/auth/register", {
       username,
       email,
       password,
