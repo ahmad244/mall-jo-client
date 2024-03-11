@@ -33,7 +33,7 @@ const Container = styled.div`
   background-color: #f5fbfd;
   position: relative;
 
-  &:hover ${Info}{
+  &:hover ${Info} {
     opacity: 1;
   }
 `;
@@ -69,23 +69,27 @@ const Icon = styled.div`
 
 const Product = ({ item }) => {
   return (
-    <Container>
-      <Circle />
-      <Image src={item.img} />
-      <Info>
-        <Icon>
-          <ShoppingCartOutlined />
-        </Icon>
-        <Icon>
-          <Link to={`/product/${item._id}`}>
-          <SearchOutlined />
-          </Link>
-        </Icon>
-        <Icon>
-          <FavoriteBorderOutlined />
-        </Icon>
-      </Info>
-    </Container>
+    <Link to={`/product/${item._id}`}>
+      <Container>
+        <Circle />
+        <Image src={item.img} />
+        <Info>
+          <Icon>
+            <ShoppingCartOutlined />
+          </Icon>
+          <Icon>
+            <Link to={`/product/${item._id}`}>
+              <SearchOutlined />
+            </Link>
+          </Icon>
+          <Icon>
+            <Link to={`/cart`}>
+              <FavoriteBorderOutlined />
+            </Link>
+          </Icon>
+        </Info>
+      </Container>
+    </Link>
   );
 };
 

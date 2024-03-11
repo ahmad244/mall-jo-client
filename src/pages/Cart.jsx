@@ -8,7 +8,7 @@ import { mobile } from "../responsive";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
-import { useHistory } from "react-router";
+import { useNavigate  } from "react-router";
 import { getCart, addToCart, deleteFromCart } from "../redux/apiCalls";
 
 const KEY = process.env.REACT_APP_STRIPE;
@@ -163,7 +163,7 @@ const Button = styled.button`
 const Cart = () => {
   const user = useSelector((state) => state.user.currentUser);
   const [stripeToken, setStripeToken] = useState(null);
-  const history = useHistory();
+  const navigate = useNavigate ();
   const onToken = (token) => {
     setStripeToken(token);
   };
@@ -200,14 +200,14 @@ const Cart = () => {
           tokenId: stripeToken.id,
           amount: 500,
         });
-        history.push("/success", {
+        navigate.push("/success", {
           stripeData: res.data,
           products: cart,
         });
       } catch {}
     };
     stripeToken && makeRequest();
-  }, [stripeToken, cartTotal, history, cart]);
+  }, [stripeToken, cartTotal, navigate, cart]);
 
   const handleCartAddRemove = (cartItem, quantity, index) => {
     const updatedCartItem = { ...cartItem }; // Create a copy of the cart item

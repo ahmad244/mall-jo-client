@@ -140,6 +140,7 @@ const Product = () => {
       } catch {}
     };
     getProduct();
+    window.scrollTo(0, 0);
   }, [id]);
 
   const handleQuantity = (type) => {

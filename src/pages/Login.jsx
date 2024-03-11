@@ -4,7 +4,7 @@ import { login } from "../redux/apiCalls";
 import { mobile } from "../responsive";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100vw;
@@ -77,11 +77,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
-  const history = useHistory(); // Get the history object
+  const navigate = useNavigate(); // Get the navigate object
 
   const handleClick = (e) => {
     e.preventDefault();
-    login(dispatch, { username, password },history);
+    login(dispatch, { username, password },navigate);
     console.log(error)
 
   };
