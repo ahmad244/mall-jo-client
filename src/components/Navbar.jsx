@@ -1,10 +1,12 @@
 import { Badge } from "@material-ui/core";
 import { Search, ShoppingCartOutlined } from "@material-ui/icons";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { mobile } from "../responsive";
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch} from "react-redux";
 import { Link } from "react-router-dom";
+import { numOfProductsInCart } from "../redux/apiCalls";
+
 
 const Container = styled.div`
   height: 60px;
@@ -71,8 +73,13 @@ const StyledLink = styled(Link)`
 `;
 
 const Navbar = () => {
-  const quantity = useSelector((state) => state.cart.quantity);
   const user = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    user && numOfProductsInCart(dispatch);
+  });
+  const quantity = useSelector((state) => state.cart.quantity);
 
   return (
     <Container>

@@ -1,16 +1,22 @@
 import { loginFailure, loginStart, loginSuccess } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
+import { setQuantity } from "./cartRedux";
 
-export const login = async (dispatch, user, history) => {
+export const login = async (dispatch, user, navigate) => {
   // Accept history as a parameter
   dispatch(loginStart());
   try {
-    const res = await publicRequest.post("/auth/login", user);
-    dispatch(loginSuccess(res.data));
-
-    // Redirect to "/"
-    history.push("/");
+    const response = await publicRequest.post("/auth/login", user);
+    // check response status
+    if (response.status === 200 || response.status === 201) {
+      dispatch(loginSuccess(response.data));
+      // Redirect to "/"
+      navigate("/");
+    } else {
+      dispatch(loginFailure());
+    }
   } catch (err) {
+    console.log("loggin failed", err);
     dispatch(loginFailure());
   }
 };
@@ -29,11 +35,21 @@ export const register = async (username, email, password, confirmPassword) => {
       password,
     });
 
-    console.log(response.data); // You can use this data for feedback or redirect the user
   } catch (error) {
-    console.error(error); // Handle errors, e.g., display an error message to the user
+    console.error(error); 
   }
   window.location.replace("/login");
+};
+
+export const numOfProductsInCart = async (dispatch) => {
+  try {
+    const response = await userRequest.get("/carts/numOfProducts");
+    if (response.status === 200 || response.status === 201) {
+      dispatch(setQuantity(response.data.itemCount));
+    }
+  } catch (error) {
+    console.error("Error getting number of products in cart", error);
+  }
 };
 
 export const addToCart = async (productId, quantity, productSpecs) => {
@@ -45,7 +61,6 @@ export const addToCart = async (productId, quantity, productSpecs) => {
     });
 
     if (response.status === 200 || response.status === 201) {
-      console.log("Product added to cart successfully");
       return response.data;
     }
   } catch (error) {
@@ -60,7 +75,6 @@ export const deleteFromCart = async (cartItem) => {
     });
 
     if (response.status === 200 || response.status === 201) {
-      console.log("Product deleted from cart successfully");
       return response.data;
     }
   } catch (error) {
@@ -72,7 +86,6 @@ export const getCart = async () => {
   try {
     const response = await userRequest.get(`/carts/`);
     if (response.status === 200 || response.status === 201) {
-      console.log("Cart fetched successfully");
       return response.data;
     }
   } catch (error) {

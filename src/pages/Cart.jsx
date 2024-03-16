@@ -1,17 +1,20 @@
-import { Add, Remove } from "@material-ui/icons";
+import { Add, Remove, DeleteOutline } from "@material-ui/icons";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
-import StripeCheckout from "react-stripe-checkout";
+// import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
-import { useNavigate  } from "react-router";
+import { useNavigate } from "react-router";
 import { getCart, addToCart, deleteFromCart } from "../redux/apiCalls";
+// import { TransitionGroup, CSSTransition } from "react-transition-group";
 
-const KEY = process.env.REACT_APP_STRIPE;
+import "../CSS/Cart.css";
+
+// const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div``;
 
@@ -162,11 +165,11 @@ const Button = styled.button`
 
 const Cart = () => {
   const user = useSelector((state) => state.user.currentUser);
-  const [stripeToken, setStripeToken] = useState(null);
-  const navigate = useNavigate ();
-  const onToken = (token) => {
-    setStripeToken(token);
-  };
+  // const [stripeToken, setStripeToken] = useState(null);
+  const navigate = useNavigate();
+  // const onToken = (token) => {
+  //   setStripeToken(token);
+  // };
   const [cart, setCart] = useState({});
   const [cartTotal, setCartTotal] = useState(0);
 
@@ -193,21 +196,21 @@ const Cart = () => {
     setCart(cartData);
   };
 
-  useEffect(() => {
-    const makeRequest = async () => {
-      try {
-        const res = await userRequest.post("/checkout/payment", {
-          tokenId: stripeToken.id,
-          amount: 500,
-        });
-        navigate.push("/success", {
-          stripeData: res.data,
-          products: cart,
-        });
-      } catch {}
-    };
-    stripeToken && makeRequest();
-  }, [stripeToken, cartTotal, navigate, cart]);
+  // useEffect(() => {
+  //   const makeRequest = async () => {
+  //     try {
+  //       const res = await userRequest.post("/checkout/payment", {
+  //         tokenId: stripeToken.id,
+  //         amount: 500,
+  //       });
+  //       navigate.push("/success", {
+  //         stripeData: res.data,
+  //         products: cart,
+  //       });
+  //     } catch {}
+  //   };
+    //stripeToken && makeRequest();
+  // }, [stripeToken, cartTotal, navigate, cart]);
 
   const handleCartAddRemove = (cartItem, quantity, index) => {
     const updatedCartItem = { ...cartItem }; // Create a copy of the cart item
@@ -216,8 +219,11 @@ const Cart = () => {
     let updatedCart = { ...cart }; // Create a copy of the cart
 
     if (updatedCartItem.quantity > 0) {
-      addToCart(updatedCartItem.productId, quantity, updatedCartItem.productSpecs);
-      console.log("index---> ", index);
+      addToCart(
+        updatedCartItem.productId,
+        quantity,
+        updatedCartItem.productSpecs
+      );
       updatedCart.products[index] = updatedCartItem; // Update the cart item at the specified index
     } else {
       deleteFromCart(updatedCartItem);
@@ -273,14 +279,22 @@ const Cart = () => {
                         }}
                       />
                       <ProductAmount>{cartItem.quantity}</ProductAmount>
-                      <Remove
-                        onClick={() => {
-                          handleCartAddRemove(cartItem, -1, index);
-                        }}
-                      />
+
+                      {cartItem.quantity === 1 ? (
+                        <DeleteOutline
+                          onClick={() => {
+                            handleCartAddRemove(cartItem, -1, index);
+                          }}
+                        />
+                      ) : (
+                        <Remove
+                          onClick={() => {
+                            handleCartAddRemove(cartItem, -1, index);
+                          }}
+                        />
+                      )}
                     </ProductAmountContainer>
                     <ProductPrice>
-                      ${" "}
                       {(cartItem.product.price * cartItem.quantity).toFixed(2)}
                     </ProductPrice>
                   </PriceDetail>
@@ -306,7 +320,7 @@ const Cart = () => {
                 <SummaryItemText>Total</SummaryItemText>
                 <SummaryItemPrice>$ {cartTotal}</SummaryItemPrice>
               </SummaryItem>
-              <StripeCheckout
+              {/* <StripeCheckout 
                 name="Lama Shop"
                 image="https://avatars.githubusercontent.com/u/1486366?v=4"
                 billingAddress
@@ -315,9 +329,9 @@ const Cart = () => {
                 amount={cartTotal * 100}
                 token={onToken}
                 stripeKey={KEY}
-              >
-                <Button>CHECKOUT NOW</Button>
-              </StripeCheckout>
+              >*/}
+              <Button>CHECKOUT NOW</Button>
+              {/* </StripeCheckout> */}
             </Summary>
           </Bottom>
         )}

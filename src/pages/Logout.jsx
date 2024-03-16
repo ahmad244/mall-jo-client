@@ -1,9 +1,12 @@
 import { useDispatch } from "react-redux";
-import { logoutRun } from "../redux/userRedux";
+import { RESET_STATE } from "../redux/actions";
+import { useEffect } from "react";
 
 const Logout = () => {
   const dispatch = useDispatch();
-  dispatch(logoutRun());
+  useEffect(() => {
+    dispatch({ type: RESET_STATE });
+  });
   return <></>;
 };
 

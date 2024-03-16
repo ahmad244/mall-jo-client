@@ -1,6 +1,9 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import cartReducer from "./cartRedux";
 import userReducer from "./userRedux";
+import { RESET_STATE } from "./actions";
+
+
 import {
   persistStore,
   persistReducer,
@@ -19,7 +22,17 @@ const persistConfig = {
   storage,
 };
 
-const rootReducer = combineReducers({ user: userReducer, cart: cartReducer });
+const rootReducer = (state, action) => {
+  if (action.type === RESET_STATE) {
+    state = undefined;
+  }
+  return combineReducers({
+    user: userReducer,
+    cart: cartReducer
+    // Add more reducers here if needed
+  })(state, action);
+};
+
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

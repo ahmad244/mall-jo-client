@@ -12,6 +12,7 @@ import { addProduct } from "../redux/cartRedux";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/apiCalls";
 import { useSelector } from "react-redux";
+import { numOfProductsInCart } from "../redux/apiCalls";
 
 const Container = styled.div``;
 
@@ -154,10 +155,16 @@ const Product = () => {
   const handleClick = () => {
     dispatch(addProduct({ ...product, quantity, color, size }));
     console.log("accessToken   ------>", user?.accessToken);
-    addToCart( product._id,quantity, {
+    addToCart(product._id, quantity, {
       size: size,
       color: color,
-    });
+    })
+      .then((data) => {
+        numOfProductsInCart(dispatch);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
   return (
     <Container>
@@ -210,7 +217,12 @@ const Product = () => {
               <Amount>{quantity}</Amount>
               <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button style={{display:(user?._id)?"":"none"}} onClick={handleClick}>ADD TO CART</Button>
+            <Button
+              style={{ display: user?._id ? "" : "none" }}
+              onClick={handleClick}
+            >
+              ADD TO CART
+            </Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>
